@@ -1,15 +1,26 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { Ship, User, LogOut, Menu, X, ShieldCheck } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Ship, User, LogOut, Menu, X, ShieldCheck, Bell } from 'lucide-react';
 import { logout } from '../../redux/slices/authSlice';
+import { fetchNotifications } from '../../redux/slices/notificationSlice';
 import { useAuth } from '../../hooks/useAuth';
+import NotificationDrawer from './NotificationDrawer';
+
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const { user, isAuthenticated, isAdmin } = useAuth();
+  const { unreadCount } = useSelector((state) => state.notifications);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchNotifications());
+    }
+  }, [dispatch, isAuthenticated]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -72,6 +83,17 @@ const Navbar = () => {
                     <span>Admin Panel</span>
                   </Link>
                 )}
+
+                {/* Notifications Bell */}
+                <button
+                  onClick={() => setIsNotificationOpen(true)}
+                  className="p-2 text-white hover:bg-ocean-500 rounded-full transition-colors relative mr-2"
+                >
+                  <Bell size={24} />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1.5 right-1.5 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-ocean-600 animate-pulse"></span>
+                  )}
+                </button>
 
                 {/* User Menu */}
                 <div className="flex items-center space-x-3 ml-4 border-l border-ocean-500 pl-4">
@@ -155,6 +177,19 @@ const Navbar = () => {
               </Link>
             )}
             <button
+              onClick={() => {
+                setIsNotificationOpen(true);
+                setIsMenuOpen(false);
+              }}
+              className="text-white hover:text-ocean-100 flex items-center space-x-3 w-full px-3 py-2 rounded-md text-base font-medium border-t border-ocean-800 relative"
+            >
+              <Bell size={20} />
+              <span>Notifications</span>
+              {unreadCount > 0 && (
+                <span className="absolute left-7 top-2.5 h-2 w-2 bg-red-500 rounded-full border border-ocean-700 animate-pulse"></span>
+              )}
+            </button>
+            <button
               onClick={handleLogout}
               className="text-white hover:text-ocean-100 w-full text-left px-3 py-2 rounded-md text-base font-medium"
             >
@@ -163,6 +198,10 @@ const Navbar = () => {
           </div>
         </div>
       )}
+      <NotificationDrawer
+        isOpen={isNotificationOpen}
+        onClose={() => setIsNotificationOpen(false)}
+      />
     </nav>
   );
 };

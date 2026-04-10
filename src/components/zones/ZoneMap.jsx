@@ -45,8 +45,37 @@ const MapController = ({ zones, focusedZone }) => {
     return null;
 };
 
+const MapLegend = () => (
+    <div className="absolute bottom-6 left-6 z-[1000] bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-gray-200 min-w-[180px]">
+        <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Protection Levels</h4>
+        <div className="space-y-2.5">
+            {PROTECTION_LEVELS.map((level) => (
+                <div key={level.value} className="flex items-center gap-3">
+                    <div
+                        className="w-3.5 h-3.5 rounded-full border shadow-sm"
+                        style={{
+                            backgroundColor: level.color === 'red' ? '#ef4444' :
+                                level.color === 'orange' ? '#f97316' :
+                                    level.color === 'yellow' ? '#eab308' : '#3b82f6',
+                            borderColor: level.color === 'red' ? '#b91c1c' :
+                                level.color === 'orange' ? '#c2410c' :
+                                    level.color === 'yellow' ? '#a16207' : '#1d4ed8'
+                        }}
+                    />
+                    <span className="text-sm font-medium text-gray-700">{level.label}</span>
+                </div>
+            ))}
+            <div className="flex items-center gap-3 mt-1 pt-2 border-t border-gray-100">
+                <div className="w-3.5 h-3.5 rounded-sm border-2 border-red-600 bg-red-100 animate-pulse" />
+                <span className="text-sm font-bold text-red-600">Emergency</span>
+            </div>
+        </div>
+    </div>
+);
+
 const ZoneMap = ({ zones = [], focusedZone = null }) => {
     const [isFullscreen, setIsFullscreen] = React.useState(false);
+    const [hoveredZoneId, setHoveredZoneId] = React.useState(null);
 
     const getZoneStyle = (level) => {
         const config = PROTECTION_LEVELS.find(p => p.value === level);
@@ -66,12 +95,26 @@ const ZoneMap = ({ zones = [], focusedZone = null }) => {
 
     const ZonePopupContent = ({ zone }) => (
         <div className="p-2 min-w-[200px]">
-            <h3 className="font-bold text-lg text-ocean-900 border-b pb-1 mb-2">{zone.name}</h3>
+            <h3 className="font-bold text-lg text-ocean-900 border-b pb-1 mb-2">
+                {zone.name}
+                {zone.isEmergency && (
+                    <span className="ml-2 bg-red-600 text-white text-[10px] uppercase px-2 py-0.5 rounded-full animate-pulse">
+                        Emergency
+                    </span>
+                )}
+            </h3>
             <div className="space-y-3">
-                <p className="text-sm flex items-center gap-1.5 text-gray-700">
-                    <Shield size={14} className="text-ocean-500" />
-                    <span className="font-semibold capitalize">{zone.zoneType.replace(/_/g, ' ')}</span>
-                </p>
+                <div className="flex items-center justify-between">
+                    <p className="text-sm flex items-center gap-1.5 text-ocean-700 font-bold">
+                        <Shield size={14} />
+                        <span className="capitalize">{zone.zoneType.replace(/_/g, ' ')}</span>
+                    </p>
+                    {zone.zoneType === 'other' && zone.customZoneType && (
+                        <span className="bg-ocean-100 text-ocean-700 text-[10px] font-bold px-1.5 py-0.5 rounded border border-ocean-200">
+                            {zone.customZoneType}
+                        </span>
+                    )}
+                </div>
 
                 <div className="flex items-center gap-2">
                     <span className={`text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 ${zone.riskLevel > 7 ? 'bg-red-100 text-red-700' :
@@ -90,12 +133,12 @@ const ZoneMap = ({ zones = [], focusedZone = null }) => {
 
                 {zone.marineSpecies && zone.marineSpecies.length > 0 && (
                     <div className="pt-3 border-t border-gray-100">
-                        <p className="text-xs font-bold text-gray-500 uppercase flex items-center gap-1 mb-2">
-                            <Fish size={14} /> Protected Biodiversity
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-1">
+                            <Fish size={10} /> Protected Species
                         </p>
-                        <div className="flex flex-wrap gap-1.5">
+                        <div className="flex flex-wrap gap-1">
                             {zone.marineSpecies.map((s, i) => (
-                                <span key={i} className="text-xs bg-gray-50 text-gray-700 px-2 py-0.5 rounded-md border border-gray-200">
+                                <span key={i} className="text-[10px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-100 font-bold">
                                     {s}
                                 </span>
                             ))}
@@ -105,7 +148,7 @@ const ZoneMap = ({ zones = [], focusedZone = null }) => {
 
                 {zone.description && (
                     <div className="pt-3 border-t border-gray-100">
-                        <p className="text-xs text-gray-600 leading-relaxed italic">
+                        <p className="text-[11px] text-gray-500 leading-relaxed italic line-clamp-3 bg-gray-50 p-2 rounded-lg border border-gray-100">
                             {zone.description}
                         </p>
                     </div>
@@ -129,6 +172,7 @@ const ZoneMap = ({ zones = [], focusedZone = null }) => {
                 zoom={2}
                 className="h-full w-full"
             >
+                <MapLegend />
                 {/* Esri World Ocean Base Layer (Bathymetry/Depths) */}
                 <TileLayer
                     url="https://services.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}"
@@ -145,6 +189,7 @@ const ZoneMap = ({ zones = [], focusedZone = null }) => {
                     const positions = zone.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
                     const style = getZoneStyle(zone.protectionLevel);
                     const isFocused = focusedZone?._id === zone._id;
+                    const isHovered = hoveredZoneId === zone._id;
 
                     // Calculate a simple centroid for the marker
                     const latSum = positions.reduce((sum, p) => sum + p[0], 0);
@@ -155,12 +200,16 @@ const ZoneMap = ({ zones = [], focusedZone = null }) => {
                         <React.Fragment key={zone._id}>
                             <Polygon
                                 positions={positions}
+                                eventHandlers={{
+                                    mouseover: () => setHoveredZoneId(zone._id),
+                                    mouseout: () => setHoveredZoneId(null),
+                                }}
                                 pathOptions={{
-                                    fillColor: style.fillColor,
-                                    fillOpacity: isFocused ? 0.4 : 0.2,
-                                    color: style.color,
-                                    weight: isFocused ? 3 : 1,
-                                    dashArray: isFocused ? '5, 10' : '5, 5',
+                                    fillColor: zone.isEmergency ? '#dc2626' : style.fillColor,
+                                    fillOpacity: zone.isEmergency ? 0.4 : (isFocused || isHovered ? 0.4 : 0.2),
+                                    color: zone.isEmergency ? '#991b1b' : style.color,
+                                    weight: zone.isEmergency ? 4 : (isFocused || isHovered ? 3 : 1),
+                                    dashArray: zone.isEmergency ? '1, 10' : (isFocused || isHovered ? '0' : '5, 5'),
                                 }}
                             >
                                 <Popup>
@@ -182,7 +231,7 @@ const ZoneMap = ({ zones = [], focusedZone = null }) => {
 
                 <MapController zones={zones} focusedZone={focusedZone} />
             </MapContainer>
-        </div>
+        </div >
     );
 };
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import {
   fetchMarineZones,
   deleteMarineZone,
@@ -19,6 +20,7 @@ const MarineZonesPage = () => {
   const [focusedZone, setFocusedZone] = useState(null);
 
   const dispatch = useDispatch();
+  const location = useLocation();
   const { zones, loading } = useSelector((state) => state.marineZones);
   const { isAdmin, isEnvironmentalOfficer } = useAuth();
 
@@ -27,6 +29,20 @@ const MarineZonesPage = () => {
   useEffect(() => {
     dispatch(fetchMarineZones({ search: searchTerm }));
   }, [dispatch, searchTerm]);
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const focusId = queryParams.get('focus');
+
+    if (focusId && zones.length > 0) {
+      const zoneToFocus = zones.find((z) => z._id === focusId);
+      if (zoneToFocus) {
+        setFocusedZone(zoneToFocus);
+        // Optional: clear param to prevent refocusing on every render
+        // But better to keep it for bookmarking/direct links
+      }
+    }
+  }, [location.search, zones]);
 
   const handleEdit = (zone) => {
     setSelectedZone(zone);

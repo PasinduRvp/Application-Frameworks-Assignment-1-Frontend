@@ -5,6 +5,7 @@ import marineZoneReducer from './slices/marineZoneSlice';
 import routeReducer from './slices/routeSlice';
 import analyticsReducer from './slices/analyticsSlice';
 import userReducer from './slices/userSlice';
+import notificationReducer from './slices/notificationSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     routes: routeReducer,
     analytics: analyticsReducer,
     users: userReducer,
+    notifications: notificationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
