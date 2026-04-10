@@ -4,18 +4,21 @@ import { createMarineZone, updateMarineZone } from '../../redux/slices/marineZon
 import { ZONE_TYPES, PROTECTION_LEVELS } from '../../utils/constants';
 import Loader from '../common/Loader';
 import ZoneDrawer from './ZoneDrawer';
-import { Map, List, AlertCircle,X } from 'lucide-react';
+import { Map, List, AlertCircle, X, ShieldAlert } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 const MarineZoneForm = ({ zone, onClose, onSuccess }) => {
+  const { isAdmin } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     zoneType: 'marine_protected_area',
-    protectionLevel: 'monitored',
-    riskLevel: 5,
-    speedLimit: '',
     description: '',
+    customZoneType: '',
+    isEmergency: false,
     coordinates: [], // Flexible array of [lng, lat]
+    marineSpecies: [],
   });
+  const [newSpecies, setNewSpecies] = useState('');
 
   const [inputMode, setInputMode] = useState('map'); // 'map' or 'manual'
   const [loading, setLoading] = useState(false);
@@ -38,10 +41,30 @@ const MarineZoneForm = ({ zone, onClose, onSuccess }) => {
         riskLevel: zone.riskLevel || 5,
         speedLimit: zone.speedLimit || '',
         description: zone.description || '',
+        isEmergency: zone.isEmergency || false,
         coordinates: displayCoords,
+        marineSpecies: zone.marineSpecies || [],
+        customZoneType: zone.customZoneType || '',
       });
     }
   }, [zone]);
+
+  const addSpecies = () => {
+    if (newSpecies.trim() && !formData.marineSpecies.includes(newSpecies.trim())) {
+      setFormData({
+        ...formData,
+        marineSpecies: [...formData.marineSpecies, newSpecies.trim()],
+      });
+      setNewSpecies('');
+    }
+  };
+
+  const removeSpecies = (species) => {
+    setFormData({
+      ...formData,
+      marineSpecies: formData.marineSpecies.filter((s) => s !== species),
+    });
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -103,6 +126,9 @@ const MarineZoneForm = ({ zone, onClose, onSuccess }) => {
         riskLevel: parseInt(formData.riskLevel),
         speedLimit: formData.speedLimit ? parseInt(formData.speedLimit) : null,
         description: formData.description,
+        isEmergency: formData.isEmergency,
+        marineSpecies: formData.marineSpecies,
+        customZoneType: formData.zoneType === 'other' ? formData.customZoneType : '',
         geometry: {
           type: 'Polygon',
           coordinates: [numericCoords],
@@ -161,6 +187,26 @@ const MarineZoneForm = ({ zone, onClose, onSuccess }) => {
                 ))}
               </select>
             </div>
+          </div>
+
+          {formData.zoneType === 'other' && (
+            <div className="animate-in fade-in slide-in-from-top-1 duration-200">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Specify Custom Type *
+              </label>
+              <input
+                type="text"
+                name="customZoneType"
+                required
+                value={formData.customZoneType}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-ocean-500"
+                placeholder="Enter zone category..."
+              />
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Protection *
@@ -170,16 +216,13 @@ const MarineZoneForm = ({ zone, onClose, onSuccess }) => {
                 required
                 value={formData.protectionLevel}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-ocean-500"
               >
                 {PROTECTION_LEVELS.map((level) => (
                   <option key={level.value} value={level.value}>{level.label}</option>
                 ))}
               </select>
             </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Risk (1-10) *
@@ -192,37 +235,51 @@ const MarineZoneForm = ({ zone, onClose, onSuccess }) => {
                 max="10"
                 value={formData.riskLevel}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Speed Limit (kts)
-              </label>
-              <input
-                type="number"
-                name="speedLimit"
-                min="0"
-                value={formData.speedLimit}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                placeholder="Optional"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-ocean-500"
               />
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows="4"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              placeholder="Regulations, wildlife info..."
-            />
+          <div className="pt-4 border-t space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Protected Biodiversity
+              </label>
+              <div className="flex gap-2 mb-2">
+                <input
+                  type="text"
+                  value={newSpecies}
+                  onChange={(e) => setNewSpecies(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSpecies())}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-ocean-500"
+                  placeholder="Add species (e.g., Blue Whale)"
+                />
+                <button
+                  type="button"
+                  onClick={addSpecies}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+                >
+                  Add
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {formData.marineSpecies.map((species, index) => (
+                  <span
+                    key={index}
+                    className="flex items-center gap-1 bg-ocean-50 text-ocean-700 px-2.5 py-1 rounded-lg text-xs font-semibold border border-ocean-100 shadow-sm"
+                  >
+                    {species}
+                    <button
+                      type="button"
+                      onClick={() => removeSpecies(species)}
+                      className="hover:text-red-500 transition-colors ml-1"
+                    >
+                      <X size={12} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 

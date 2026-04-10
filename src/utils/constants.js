@@ -26,9 +26,13 @@ export const ZONE_TYPES = [
   { value: 'coral_reef', label: 'Coral Reef' },
   { value: 'whale_migration', label: 'Whale Migration' },
   { value: 'marine_protected_area', label: 'Marine Protected Area' },
+  { value: 'oil_leak_area', label: 'Oil Leak Area' },
   { value: 'breeding_ground', label: 'Breeding Ground' },
   { value: 'fishing_restricted', label: 'Fishing Restricted' },
   { value: 'pollution_sensitive', label: 'Pollution Sensitive' },
+  { value: 'accident_area', label: 'Accident Area' },
+  { value: 'research_zone', label: 'Scientific Research Zone' },
+  { value: 'other', label: 'Other' },
 ];
 
 export const PROTECTION_LEVELS = [
