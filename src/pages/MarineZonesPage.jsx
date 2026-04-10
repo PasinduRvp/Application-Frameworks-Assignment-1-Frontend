@@ -38,8 +38,7 @@ const MarineZonesPage = () => {
       const zoneToFocus = zones.find((z) => z._id === focusId);
       if (zoneToFocus) {
         setFocusedZone(zoneToFocus);
-        // Optional: clear param to prevent refocusing on every render
-        // But better to keep it for bookmarking/direct links
+        
       }
     }
   }, [location.search, zones]);
