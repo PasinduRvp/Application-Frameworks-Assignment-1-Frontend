@@ -1,6 +1,11 @@
 import axios from './axios';
 
 export const userApi = {
+    createUser: async (userData) => {
+        const response = await axios.post('/users', userData);
+        return response.data;
+    },
+
     getAllUsers: async (params) => {
         const response = await axios.get('/users', { params });
         return response.data;
@@ -21,3 +26,4 @@ export const userApi = {
         return response.data;
     },
 };
+

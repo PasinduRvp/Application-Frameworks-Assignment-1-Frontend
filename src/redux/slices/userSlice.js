@@ -2,6 +2,19 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { userApi } from '../../api/userApi';
 import { toast } from 'react-toastify';
 
+export const createUser = createAsyncThunk(
+    'users/createUser',
+    async (userData, { rejectWithValue }) => {
+        try {
+            const response = await userApi.createUser(userData);
+            return response.data;
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to create user');
+            return rejectWithValue(error.response?.data);
+        }
+    }
+);
+
 export const fetchUsers = createAsyncThunk(
     'users/fetchUsers',
     async (params, { rejectWithValue }) => {
@@ -69,6 +82,10 @@ const userSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
+            .addCase(createUser.fulfilled, (state, action) => {
+                state.users.unshift(action.payload);
+                state.pagination.total += 1;
+            })
             .addCase(updateUser.fulfilled, (state, action) => {
                 const index = state.users.findIndex((u) => u._id === action.payload._id);
                 if (index !== -1) {
@@ -82,3 +99,4 @@ const userSlice = createSlice({
 });
 
 export default userSlice.reducer;
+
