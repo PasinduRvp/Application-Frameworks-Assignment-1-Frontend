@@ -26,10 +26,7 @@ const MarineZoneForm = ({ zone, onClose, onSuccess }) => {
 
   useEffect(() => {
     if (zone) {
-      // For editing, extract coordinates
-      // GeoJSON Polygon coordinates are [ [ [lng, lat], [lng, lat], ... ] ]
       const rawCoords = zone.geometry?.coordinates?.[0] || [];
-      // Remove the closing point for the UI drawer
       const displayCoords = rawCoords.length > 1
         ? rawCoords.slice(0, -1)
         : rawCoords;
@@ -112,7 +109,6 @@ const MarineZoneForm = ({ zone, onClose, onSuccess }) => {
     setLoading(true);
 
     try {
-      // GeoJSON requires a closed polygon (last point must equal first point)
       const numericCoords = formData.coordinates.map(p => [
         parseFloat(p[0]),
         parseFloat(p[1])

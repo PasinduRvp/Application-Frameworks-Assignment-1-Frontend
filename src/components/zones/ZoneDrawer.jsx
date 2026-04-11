@@ -6,7 +6,6 @@ import { Trash2, RotateCcw, Shield } from 'lucide-react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { PROTECTION_LEVELS } from '../../utils/constants';
 
-// Fix for default marker icons in Leaflet
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -38,7 +37,6 @@ const FitBounds = ({ points }) => {
     return null;
 };
 
-// Custom Shield Icon for Markers
 const createShieldIcon = (color) => {
     const iconMarkup = renderToStaticMarkup(
         <div className={`p-0.5 rounded-full border bg-white shadow-sm`} style={{ borderColor: color, color: color }}>
@@ -92,7 +90,6 @@ const ZoneDrawer = ({ coordinates, onChange, zones = [] }) => {
         onChange(updatedPoints);
     };
 
-    // Convert points [lng, lat] to Leaflet [lat, lng]
     const leafletPoints = points.map(p => [p[1], p[0]]);
 
     return (
