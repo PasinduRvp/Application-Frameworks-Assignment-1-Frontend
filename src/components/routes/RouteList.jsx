@@ -73,7 +73,6 @@ const RouteList = () => {
         
       </div>
 
-      
       {/* Routes Grid */}
       {loading ? (
         <div className="py-12">
@@ -99,6 +98,5 @@ const RouteList = () => {
     </div>
   );
 };
-
 
 export default RouteList;

@@ -23,7 +23,7 @@ const RoutePlanner = () => {
     },
     plannedDeparture: '',
   });
-  const [selectionMode, setSelectionMode] = useState(null); // 'start', 'end' or null showing in this part
+  const [selectionMode, setSelectionMode] = useState(null); // 'start', 'end' or null
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -83,7 +83,6 @@ const RoutePlanner = () => {
       },
     }));
 
-
     // Auto-disable selection mode after picking
     setSelectionMode(null);
   };
@@ -117,7 +116,7 @@ const RoutePlanner = () => {
   const handleConfirm = async () => {
     if (!calculatedRoute) return;
 
-    // The calculatedRoute object contains all metrics needed for saving the route, including the original form data
+    // The calculatedRoute object contains all metrics needed for saving
     const result = await dispatch(calculateRoute(calculatedRoute));
 
     if (calculateRoute.fulfilled.match(result)) {
@@ -128,7 +127,7 @@ const RoutePlanner = () => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-20">
-     
+      {/* Form Section */}
       <div className="bg-white rounded-lg shadow-md p-6 h-fit">
         <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
           <Navigation className="mr-2 text-ocean-600" size={24} />
@@ -136,7 +135,7 @@ const RoutePlanner = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-         
+          {/* Route Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Route Name *
@@ -152,7 +151,7 @@ const RoutePlanner = () => {
             />
           </div>
 
-          
+          {/* Vessel Selection */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Select Vessel *
@@ -173,7 +172,7 @@ const RoutePlanner = () => {
             </select>
           </div>
 
-         
+          {/* Start Point */}
           <div className="border border-gray-200 rounded-lg p-4">
             <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
               <MapPin className="mr-2 text-green-600" size={20} />
@@ -227,7 +226,7 @@ const RoutePlanner = () => {
             </div>
           </div>
 
-         
+          {/* End Point */}
           <div className="border border-gray-200 rounded-lg p-4">
             <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
               <MapPin className="mr-2 text-red-600" size={20} />
@@ -281,7 +280,7 @@ const RoutePlanner = () => {
             </div>
           </div>
 
-         
+          {/* Planned Departure */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Planned Departure (Optional)
@@ -295,7 +294,7 @@ const RoutePlanner = () => {
             />
           </div>
 
-          
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
@@ -306,7 +305,7 @@ const RoutePlanner = () => {
         </form>
       </div>
 
-      
+      {/* Results Section */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-gray-900">Route Details</h2>
@@ -373,7 +372,7 @@ const RoutePlanner = () => {
               </button>
             </div>
 
-            
+            {/* Warnings */}
             {warnings && warnings.length > 0 && (
               <div className="border-l-4 border-yellow-400 bg-yellow-50 p-4">
                 <div className="flex items-start">
