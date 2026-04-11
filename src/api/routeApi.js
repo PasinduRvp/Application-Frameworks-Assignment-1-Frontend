@@ -1,11 +1,12 @@
 import axios from './axios';
 
+
 export const routeApi = {
   previewRoute: async (routeData) => {
     const response = await axios.post('/routes/preview', routeData);
     return response.data;
   },
-  
+
 // Calculate (Confirm/Save) Route with details
   calculateRoute: async (routeData) => {
     const response = await axios.post('/routes/calculate', routeData);
