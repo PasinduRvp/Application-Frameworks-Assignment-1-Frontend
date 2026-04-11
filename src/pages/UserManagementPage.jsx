@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers, updateUser, deleteUser, createUser } from '../redux/slices/userSlice';
-import { Search, UserMinus, ShieldAlert, CheckCircle, XCircle, AlertTriangle, UserPlus, X, Eye, EyeOff } from 'lucide-react';
+import { Search, UserMinus, CheckCircle, XCircle, AlertTriangle, UserPlus, X, Eye, EyeOff } from 'lucide-react';
 import Card from '../components/common/Card';
 import Loader from '../components/common/Loader';
 import { toast } from 'react-toastify';

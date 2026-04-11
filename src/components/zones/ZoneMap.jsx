@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Polygon, Popup, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Maximize2, Minimize2, Shield, Fish, AlertCircle, Info } from 'lucide-react';
+import { Maximize2, Minimize2, Shield, Fish, AlertCircle } from 'lucide-react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { PROTECTION_LEVELS } from '../../utils/constants';
 

@@ -4,11 +4,11 @@ import { createMarineZone, updateMarineZone } from '../../redux/slices/marineZon
 import { ZONE_TYPES, PROTECTION_LEVELS } from '../../utils/constants';
 import Loader from '../common/Loader';
 import ZoneDrawer from './ZoneDrawer';
-import { Map, List, AlertCircle, X, ShieldAlert } from 'lucide-react';
+import { Map, List, AlertCircle, X } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 const MarineZoneForm = ({ zone, onClose, onSuccess }) => {
-  const { isAdmin } = useAuth();
+  useAuth();
   const [formData, setFormData] = useState({
     name: '',
     zoneType: 'marine_protected_area',

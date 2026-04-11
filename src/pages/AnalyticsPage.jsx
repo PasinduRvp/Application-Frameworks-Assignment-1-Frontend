@@ -4,7 +4,7 @@ import {
   fetchEmissionStats,
   fetchFuelSavings,
 } from '../redux/slices/analyticsSlice';
-import { TrendingDown, Droplet, DollarSign, Leaf, AlertTriangle, Shield, MapPin } from 'lucide-react';
+import { TrendingDown, Droplet, DollarSign, Leaf, AlertTriangle, Shield } from 'lucide-react';
 import Loader from '../components/common/Loader';
 import { formatNumber, formatCurrency, formatEmission } from '../utils/formatters';
 
