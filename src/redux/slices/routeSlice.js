@@ -123,7 +123,7 @@ const routeSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Preview Route
+      // Preview Route completes with warnings
       .addCase(previewRoute.pending, (state) => {
         state.loading = true;
       })
@@ -136,21 +136,21 @@ const routeSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      // Calculate (Confirm/Save) Route
+      // Calculate (Confirm/Save) Route with details
       .addCase(calculateRoute.pending, (state) => {
         state.loading = true;
       })
       .addCase(calculateRoute.fulfilled, (state, action) => {
         state.loading = false;
         state.currentRoute = action.payload;
-        state.calculatedRoute = null; // Clear preview after saving
+        state.calculatedRoute = null; 
         state.warnings = [];
       })
       .addCase(calculateRoute.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-      // Fetch Routes
+      
       .addCase(fetchRoutes.pending, (state) => {
         state.loading = true;
       })
@@ -163,7 +163,7 @@ const routeSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      // Delete Route
+      
       .addCase(deleteRoute.fulfilled, (state, action) => {
         state.routes = state.routes.filter((r) => r._id !== action.payload);
       })
@@ -181,7 +181,7 @@ const routeSlice = createSlice({
       })
       .addCase(updateRouteStatus.fulfilled, (state, action) => {
         state.currentRoute = action.payload;
-        // Also update in the main routes list if found
+        // Also update in the main routes list if found with matching ID
         const index = state.routes.findIndex((r) => r._id === action.payload._id);
         if (index !== -1) {
           state.routes[index] = action.payload;

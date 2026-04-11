@@ -18,13 +18,16 @@ L.Icon.Default.mergeOptions({
     shadowUrl: markerShadow,
 });
 
+
+
+
 // Component to handle map centering and bounds
 const MapBounds = ({ points }) => {
     const map = useMap();
 
     useEffect(() => {
         if (points && points.length > 0) {
-            // Filter out any null/undefined points
+            // Filter out any null/undefined points and ensure they have valid lat/lng
             const validPoints = points.filter(p => p && p[0] !== undefined && p[1] !== undefined);
             if (validPoints.length > 0) {
                 const bounds = L.latLngBounds(validPoints);
@@ -35,6 +38,7 @@ const MapBounds = ({ points }) => {
 
     return null;
 };
+
 
 const MapEvents = ({ onMapClick }) => {
     useMapEvents({
@@ -47,7 +51,7 @@ const MapEvents = ({ onMapClick }) => {
     return null;
 };
 
-// Custom Shield Icon for Markers
+// Custom Shield Icon for Markers representing protected zones
 const createShieldIcon = (color) => {
     const iconMarkup = renderToStaticMarkup(
         <div className={`p-1 rounded-full border-2 bg-white shadow-md`} style={{ borderColor: color, color: color }}>
@@ -66,7 +70,7 @@ const createShieldIcon = (color) => {
 const RouteMap = ({ startPoint, endPoint, waypoints = [], path = [], zones = [], onMapClick }) => {
     const [isFullscreen, setIsFullscreen] = React.useState(false);
 
-    // Convert [lng, lat] to [lat, lng] for Leaflet
+    // Convert [lng, lat] to [lat, lng] for Leaflet and handle potential missing coordinates
     const startPos = startPoint?.coordinates && startPoint.coordinates[0] !== undefined ? [startPoint.coordinates[1], startPoint.coordinates[0]] : null;
     const endPos = endPoint?.coordinates && endPoint.coordinates[0] !== undefined ? [endPoint.coordinates[1], endPoint.coordinates[0]] : null;
 
@@ -74,7 +78,7 @@ const RouteMap = ({ startPoint, endPoint, waypoints = [], path = [], zones = [],
         [wp.coordinates[1], wp.coordinates[0]]
     );
 
-    // If we have a full path (array of [lng, lat]), convert it
+    // If we have a full path (array of [lng, lat]), convert it to [lat, lng] for Leaflet. If not, use start/end/waypoints to create a simple path.
     const polylinePath = path.length > 0
         ? path.map(coord => [coord[1], coord[0]])
         : (startPos && endPos ? [startPos, ...waypointPositions, endPos] : []);
@@ -93,6 +97,7 @@ const RouteMap = ({ startPoint, endPoint, waypoints = [], path = [], zones = [],
         }
     };
 
+    
     // All points to determine bounds
     const allPoints = polylinePath.length > 0 ? polylinePath : waypointPositions;
 
@@ -157,7 +162,7 @@ const RouteMap = ({ startPoint, endPoint, waypoints = [], path = [], zones = [],
 
     return (
         <div className={`relative rounded-lg overflow-hidden shadow-inner border border-gray-200 transition-all duration-500 ease-in-out ${isFullscreen ? 'fixed inset-0 z-[9999] h-screen w-screen' : 'h-[400px] w-full'}`}>
-            {/* Fullscreen Toggle Button */}
+           
             <button
                 type="button"
                 onClick={toggleFullscreen}
@@ -171,13 +176,13 @@ const RouteMap = ({ startPoint, endPoint, waypoints = [], path = [], zones = [],
                 zoom={3}
                 className="h-full w-full"
             >
-                {/* Esri World Ocean Base Layer (Bathymetry/Depths) */}
+                
                 <TileLayer
                     url="https://services.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}"
                     attribution='Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri'
                 />
 
-                {/* OpenSeaMap Overlay (Nautical markers, buoys, beacons) */}
+                
                 <TileLayer
                     url="https://tile.openseamap.org/seamap/{z}/{x}/{y}.png"
                     attribution='Map data &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors'
@@ -185,13 +190,13 @@ const RouteMap = ({ startPoint, endPoint, waypoints = [], path = [], zones = [],
 
                 <MapEvents onMapClick={onMapClick} />
 
-                {/* Marine Protected Zones */}
+               
                 {zones.map((zone) => {
                     if (!zone.geometry?.coordinates?.[0]) return null;
                     const positions = zone.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
                     const style = getZoneStyle(zone.protectionLevel);
 
-                    // Calculate a simple centroid for the marker
+                    
                     const latSum = positions.reduce((sum, p) => sum + p[0], 0);
                     const lngSum = positions.reduce((sum, p) => sum + p[1], 0);
                     const centroid = [latSum / positions.length, lngSum / positions.length];
@@ -261,5 +266,6 @@ const RouteMap = ({ startPoint, endPoint, waypoints = [], path = [], zones = [],
         </div>
     );
 };
+
 
 export default RouteMap;
