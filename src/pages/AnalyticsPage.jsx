@@ -171,55 +171,67 @@ const AnalyticsPage = () => {
             </div>
           )}
           {/* Recent Violations */}
-          {emissionStats?.recentViolations && emissionStats.recentViolations.length > 0 && (
+          {emissionStats && (
             <div className="mt-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                 <Shield className="mr-2 text-red-600" size={20} />
                 Recent Environmental Infractions
               </h2>
-              <div className="bg-white rounded-lg shadow-md overflow-hidden border border-red-100">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-red-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-red-700 uppercase tracking-wider">Vessel</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-red-700 uppercase tracking-wider">Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-red-700 uppercase tracking-wider">Type</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-red-700 uppercase tracking-wider">Severity</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-red-700 uppercase tracking-wider">Description</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {emissionStats.recentViolations.map((violation, index) => (
-                      <tr key={index} className="hover:bg-red-50/30 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {violation.vesselName}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {new Date(violation.timestamp).toLocaleString()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="px-2 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-800 uppercase">
-                            {violation.type.replace(/_/g, ' ')}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs font-bold rounded-full uppercase ${violation.severity === 'high' || violation.severity === 'critical'
-                            ? 'bg-red-100 text-red-800'
-                            : violation.severity === 'medium'
-                              ? 'bg-orange-100 text-orange-800'
-                              : 'bg-yellow-100 text-yellow-800'
-                            }`}>
-                            {violation.severity}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-600">
-                          {violation.description}
-                        </td>
+              {emissionStats.recentViolations && emissionStats.recentViolations.length > 0 ? (
+                <div className="bg-white rounded-lg shadow-md overflow-hidden border border-red-100">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-red-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-red-700 uppercase tracking-wider">Vessel</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-red-700 uppercase tracking-wider">Date</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-red-700 uppercase tracking-wider">Type</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-red-700 uppercase tracking-wider">Severity</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-red-700 uppercase tracking-wider">Description</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {emissionStats.recentViolations.map((violation, index) => (
+                        <tr key={index} className="hover:bg-red-50/30 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {violation.vesselName}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {new Date(violation.timestamp).toLocaleString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className="px-2 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-800 uppercase">
+                              {violation.type.replace(/_/g, ' ')}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 py-1 text-xs font-bold rounded-full uppercase ${violation.severity === 'high' || violation.severity === 'critical'
+                              ? 'bg-red-100 text-red-800'
+                              : violation.severity === 'medium'
+                                ? 'bg-orange-100 text-orange-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                              }`}>
+                              {violation.severity}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-600">
+                            {violation.description}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 text-center">
+                  <div className="bg-green-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Shield className="text-green-500" size={22} />
+                  </div>
+                  <p className="font-semibold text-gray-700">No violations detected</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Violations are recorded when a completed route passes through a protected marine zone.
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </>

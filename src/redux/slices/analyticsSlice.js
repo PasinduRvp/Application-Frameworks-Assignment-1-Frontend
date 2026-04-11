@@ -60,11 +60,27 @@ const analyticsSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(fetchEmissionStats.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(fetchEmissionStats.fulfilled, (state, action) => {
+        state.loading = false;
         state.emissionStats = action.payload;
       })
+      .addCase(fetchEmissionStats.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchFuelSavings.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(fetchFuelSavings.fulfilled, (state, action) => {
+        state.loading = false;
         state.fuelSavings = action.payload;
+      })
+      .addCase(fetchFuelSavings.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
