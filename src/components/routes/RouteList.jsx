@@ -7,24 +7,24 @@ import Loader from '../common/Loader';
 import { Navigation, Search } from 'lucide-react';
 import { useDebounce } from '../../hooks/useDebounce';
 
+
 const RouteList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { routes, loading } = useSelector((state) => state.routes);
   const debouncedSearch = useDebounce(searchTerm, 500);
 
-
   useEffect(() => {
+
     dispatch(
       fetchRoutes({
         search: debouncedSearch,
         status: statusFilter,
       })
     );
+
   }, [dispatch, debouncedSearch, statusFilter]);
 
 
@@ -38,6 +38,7 @@ const RouteList = () => {
   return (
     <div>
       {/* Filters */}
+
       <div className="bg-white rounded-lg shadow-md p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="relative">
@@ -45,6 +46,7 @@ const RouteList = () => {
               className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
               size={20}
             />
+
             <input
               type="text"
               placeholder="Search routes..."
@@ -52,19 +54,23 @@ const RouteList = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ocean-500"
             />
+
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ocean-500"
           >
+
             <option value="">All Status</option>
             <option value="planned">Planned</option>
             <option value="in_progress">In Progress</option>
             <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
           </select>
+
         </div>
+        
       </div>
 
       {/* Routes Grid */}
