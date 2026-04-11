@@ -6,7 +6,6 @@ import { Maximize2, Minimize2, Shield, Fish, AlertCircle, Info } from 'lucide-re
 import { renderToStaticMarkup } from 'react-dom/server';
 import { PROTECTION_LEVELS } from '../../utils/constants';
 
-// Custom Shield Icon for Markers
 const createShieldIcon = (color) => {
     const iconMarkup = renderToStaticMarkup(
         <div className={`p-1 rounded-full border-2 bg-white shadow-md`} style={{ borderColor: color, color: color }}>
@@ -22,7 +21,6 @@ const createShieldIcon = (color) => {
     });
 };
 
-// Component to handle map centering and programmatic movement
 const MapController = ({ zones, focusedZone }) => {
     const map = useMap();
 

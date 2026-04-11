@@ -38,8 +38,7 @@ const MarineZonesPage = () => {
       const zoneToFocus = zones.find((z) => z._id === focusId);
       if (zoneToFocus) {
         setFocusedZone(zoneToFocus);
-        // Optional: clear param to prevent refocusing on every render
-        // But better to keep it for bookmarking/direct links
+        
       }
     }
   }, [location.search, zones]);
@@ -117,7 +116,7 @@ const MarineZonesPage = () => {
       ) : zones.length === 0 ? (
         <div className="text-center py-12">
           <Shield className="mx-auto text-gray-400 mb-4" size={48} />
-          <p className="text-gray-500 text-lg">No marine zones found</p>
+          <p className="text-gray-500 text-lg">No Marine Protected Zones found</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
