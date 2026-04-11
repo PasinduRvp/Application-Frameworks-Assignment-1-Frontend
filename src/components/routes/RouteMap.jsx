@@ -97,9 +97,10 @@ const RouteMap = ({ startPoint, endPoint, waypoints = [], path = [], zones = [],
         }
     };
 
-    
+
     // All points to determine bounds
     const allPoints = polylinePath.length > 0 ? polylinePath : waypointPositions;
+
 
     // Default center (Oceanic view or first point)
     const defaultCenter = startPos || endPos || [0, 0];
@@ -135,6 +136,7 @@ const RouteMap = ({ startPoint, endPoint, waypoints = [], path = [], zones = [],
                 )}
             </div>
 
+            
             {zone.marineSpecies && zone.marineSpecies.length > 0 && (
                 <div className="mt-2 pt-2 border-t border-gray-100">
                     <p className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1 mb-1">
@@ -150,6 +152,7 @@ const RouteMap = ({ startPoint, endPoint, waypoints = [], path = [], zones = [],
                 </div>
             )}
 
+            
             {zone.description && (
                 <div className="mt-2 pt-2 border-t border-gray-100">
                     <p className="text-[10px] text-gray-600 italic line-clamp-3">
@@ -159,6 +162,7 @@ const RouteMap = ({ startPoint, endPoint, waypoints = [], path = [], zones = [],
             )}
         </div>
     );
+
 
     return (
         <div className={`relative rounded-lg overflow-hidden shadow-inner border border-gray-200 transition-all duration-500 ease-in-out ${isFullscreen ? 'fixed inset-0 z-[9999] h-screen w-screen' : 'h-[400px] w-full'}`}>
@@ -201,6 +205,7 @@ const RouteMap = ({ startPoint, endPoint, waypoints = [], path = [], zones = [],
                     const lngSum = positions.reduce((sum, p) => sum + p[1], 0);
                     const centroid = [latSum / positions.length, lngSum / positions.length];
 
+
                     return (
                         <React.Fragment key={zone._id}>
                             <Polygon
@@ -230,6 +235,7 @@ const RouteMap = ({ startPoint, endPoint, waypoints = [], path = [], zones = [],
                     );
                 })}
 
+                
                 {startPos && (
                     <Marker position={startPos}>
                         <Popup>
@@ -246,6 +252,7 @@ const RouteMap = ({ startPoint, endPoint, waypoints = [], path = [], zones = [],
                     </Marker>
                 )}
 
+                
                 {waypointPositions.map((pos, idx) => (
                     <Marker key={idx} position={pos}>
                         <Popup>Waypoint {idx + 1}</Popup>
